@@ -21,4 +21,4 @@ var deleteMiddle = function(head) {
     }
     previous.next = previous.next.next;
     return head;
-}
+};
