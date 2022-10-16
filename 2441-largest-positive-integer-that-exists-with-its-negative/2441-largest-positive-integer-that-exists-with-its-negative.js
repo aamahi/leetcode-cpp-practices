@@ -3,11 +3,12 @@
  * @return {number}
  */
 var findMaxK = function(nums) {
-    let numSet = new Set(nums);
-    nums = nums.sort((a,b)=>b-a);
-    for (let num of nums) {
-        if (numSet.has(num*(-1))) return num;
-        if (num < 0) break;
+    let maxValue = 0;
+    const size = nums.length;
+    for (let i = 0; i < size; i++) {
+        if (Math.abs(nums[i]) > maxValue && nums.indexOf(-nums[i]) !== -1) {
+            maxValue = nums[i];
+        }
     }
-    return -1;
+    return maxValue == 0 ? -1 : maxValue;
 };
