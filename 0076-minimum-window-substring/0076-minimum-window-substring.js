@@ -3,7 +3,7 @@
  * @param {string} t
  * @return {string}
  */
-const minWindow = function (s, t) {
+ minWindow = function (s, t) {
   if (!s || !t || s.length < t.length) return "";
 
   let l = 0, r = 0;
