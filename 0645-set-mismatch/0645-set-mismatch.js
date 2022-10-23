@@ -2,9 +2,6 @@
  * @param {number[]} nums
  * @return {number[]}
  */
-var findErrorNums = function(nums) {
-    
-};
 
 var findErrorNums = function(nums) {
     const obj = {};
