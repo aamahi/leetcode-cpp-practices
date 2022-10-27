@@ -24,6 +24,7 @@ var overlapImages = function(img1, img2, offrow, offcol) {
     }
     return overlap;
 }
+
 var largestOverlap = function(img1, img2) {
     let n = img1.length;
     let maxoverlap=0;
