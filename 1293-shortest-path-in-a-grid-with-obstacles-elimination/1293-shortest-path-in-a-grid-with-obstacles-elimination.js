@@ -1,51 +1,40 @@
+
 var shortestPath = function(grid, k) {
-    // Constants
-    const DIRECTIONS = [[-1, 0], [0, 1], [1, 0], [0, -1]]; // [Up, Right, Down, Left];
-    const m = grid.length;
-    const n = grid[0].length;
-    
-    let steps = 0;
-    const visited = new Set();
-    let queue = [[0,0,k]];
-    
-    // BFS O(V + E) = O(M * N + 4(M * N)) = O(MN)
-    while (queue.length) {
-        let nextQueue = []; 
-        while (queue.length) {
-            // Start polling items from the queue
-            const [i, j, kLeft] = queue.shift();    
-            
-            // If the cell has been visited before, skip
-            if (visited.has(`${i},${j},${kLeft}`)) {
-                continue;
-            } else {
-                visited.add(`${i},${j},${kLeft}`);
-            }
-            
-            // Has reached the end
-            if (i === m - 1 && j === n - 1) { 
-                return steps;
-            }
-            
-            // Try to move in all directions
-            for (const direction of DIRECTIONS) {
-                const nextI = i + direction[0];
-                const nextJ = j + direction[1];
-                
-                // If the coordinates are out of bounds OR a wall has been encountered with no more k left, skip 
-                if (nextI < 0 || nextJ < 0 || nextI >= m || nextJ >= n || grid[nextI][nextJ] && !kLeft) {
-                    continue;
-                }
-                
-                // Add the next step to the next iteration of BFS
-                const nextK = grid[nextI][nextJ] ? kLeft - 1 : kLeft;
-                nextQueue.push([nextI, nextJ, nextK]);
-            }
-        }
-        queue = nextQueue;
-        steps++;
-    }
-    
-      
-    return -1;
+	const directions = [[1, 0], [-1, 0], [0, -1], [0, 1]]; // UP, RIGHT, DOWN, LEFT
+	const m = grid.length, n = grid[0].length;
+		
+	if (k >= m + n - 2) // Manhattan distance
+		return m + n - 2; 	
+		
+	const queue = [[0, 0, 0, 0]]; // [row, col, # obstacles eliminated, dist]
+	
+	const visited = Array(m).fill().map(() => Array(n).fill(1601));
+	visited[0][0] = 0;
+  
+	while (queue.length !== 0) {
+		const curr = queue.shift();
+		const row = curr[0], col = curr[1], currK = curr[2], dist = curr[3];
+		
+		if (curr[0] === m - 1 && curr[1] === n - 1) 
+			return dist;
+		
+		for (const dir of directions) {
+			const newRow = row + dir[0];
+			const newCol = col + dir[1];
+			
+			if (newRow < 0 || newCol < 0 || newRow >= m || newCol >= n) // Out of Bound
+				continue;
+
+			const newK = currK + grid[newRow][newCol];
+			
+			if (newK > k || visited[newRow][newCol] <= newK)  // more optical solution exist
+				continue;
+			
+			visited[newRow][newCol] = newK;
+			queue.push([newRow, newCol, newK, dist + 1]);
+		}
+	 
+	}
+	
+	return -1;
 };
