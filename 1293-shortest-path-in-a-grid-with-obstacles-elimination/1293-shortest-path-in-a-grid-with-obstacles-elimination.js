@@ -1,31 +1,20 @@
 var shortestPath = function(grid, k) {
-    let X = grid.length;
-    let Y = grid[0].length;
-
-    let visited = new Set();
-
-    let q = [{ x: 0, y: 0, s: 0, o: 0 }];
-    while (q.length !== 0) {
-        let cur = q.shift();
-        let coord = `${cur.x} ${cur.y} ${cur.o}`;
-        if (cur.x < 0 || cur.x === X || cur.y < 0 || cur.y === Y || visited.has(coord)|| cur.o > k) {
-            continue;
+    let visited = new Set()
+    let queue = [[0,0,k,0]]//curx,cury,eliminateT,step
+    let dirs = [[0,1],[1,0],[-1,0],[0,-1]]
+    while(queue.length){
+        let [curx,cury,eleminateT,step] = queue.shift()
+        if (visited.has(`${curx}${cury}${eleminateT}`)) continue
+        if (eleminateT === -1) continue
+        if (curx === grid.length - 1 && cury === grid[0].length - 1) return step 
+        visited.add(`${curx}${cury}${eleminateT}`)
+        for (let [dx,dy] of dirs) {
+            let nextX = curx + dx
+            let nextY = cury + dy
+            if (nextX < 0 || nextX >= grid.length || nextY < 0 || nextY >= grid[0].length) continue
+            if (grid[nextX][nextY] === 0) queue.push([nextX, nextY, eleminateT,step + 1] )
+            else queue.push([nextX, nextY, eleminateT - 1,step + 1] )
         }
-
-        if (grid[cur.x][cur.y] === 1) {
-            ++cur.o;
-        }
-
-        if (cur.x === X - 1 && cur.y === Y - 1) {
-            return cur.s;
-        }
-
-        visited.add(coord);
-
-        q.push({ x: cur.x - 1, y: cur.y, s: cur.s + 1, o: cur.o });
-        q.push({ x: cur.x + 1, y: cur.y, s: cur.s + 1, o: cur.o });
-        q.push({ x: cur.x, y: cur.y - 1, s: cur.s + 1, o: cur.o });
-        q.push({ x: cur.x, y: cur.y + 1, s: cur.s + 1, o: cur.o });
     }
-    return -1;
+    return -1
 };
