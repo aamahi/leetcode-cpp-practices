@@ -22,5 +22,5 @@ var preorderTraversal = function (root) {
         preorder(root.left);
         preorder(root.right);
     }
-    return ans
+    return ans;
 };
