@@ -13,7 +13,6 @@
 var preorderTraversal = function (root) {
     const ans = [];
     preorder(root);
-    return ans;
 
     function preorder(root) {
         if (root === null) {
@@ -23,4 +22,5 @@ var preorderTraversal = function (root) {
         preorder(root.left);
         preorder(root.right);
     }
+    return ans
 };
