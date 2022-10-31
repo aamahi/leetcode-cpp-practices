@@ -9,5 +9,5 @@ var isToeplitzMatrix = function(matrix) {
                 return false;
             }
     }
-    return 1;
+    return true;
 };
