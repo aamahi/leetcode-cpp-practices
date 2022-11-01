@@ -1,44 +1,32 @@
 var findBall = function(grid) {
-    let m = grid.length;
+    const m = grid.length;
     const n = grid[0].length;
     
-    const answer = [...Array(n)].fill(-1);
+    const res = [];
+        
+    for (let j = 0; j < n; j++) {
+        res[j] = j;
+    }
     
-    const moveBall = (index, row, col) => {
-        if (row === m) {
-            answer[index] = col;
-            return true;
-        }
-        
-        if (row >= m || col < 0 || col >= n) {
-            return false;
-        }
-        
-        const dir = grid[row][col];
-        const next = [];
-        
-        switch(dir) {
-            case 1: {
-                const next = grid[row]?.[col + 1];
-                if (next === 1) {
-                    moveBall(index, row + 1, col + 1);
-                }
-                break;
+    for (let i = 0; i < m; i++) {
+        for (let j = 0; j < n; j++) {
+            if (res[j] === -1) continue;
+            
+            const currCol = res[j];
+            
+            if (currCol < n - 1 && grid[i][currCol] === 1 && grid[i][currCol + 1] === -1) {
+                res[j] = -1;
             }
-                
-            case -1: {
-                const next = grid[row]?.[col - 1];
-                if (next === -1) {
-                    moveBall(index, row + 1, col - 1);
-                }
-                break;
+            else if (currCol > 0 && grid[i][currCol] === -1 && grid[i][currCol - 1] === 1) {
+                res[j] = -1;
+            }
+            else {
+                res[j] += grid[i][currCol];
+               
+                if (res[j] === n) res[j] = -1;
             }
         }
     }
     
-    for(let i = 0; i < n; i++) {
-        moveBall(i, 0, i);
-    }
-    
-    return answer;
+    return res;
 };
