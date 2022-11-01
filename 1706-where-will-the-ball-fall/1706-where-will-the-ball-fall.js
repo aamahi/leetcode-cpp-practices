@@ -1,27 +1,44 @@
 var findBall = function(grid) {
-    const rows = grid.length;
-    const cols = grid[0].length;
+    let m = grid.length;
+    const n = grid[0].length;
     
-    function findPath(col) {
-        let row = 0;
-        while (row < rows) {
-            if ((col == 0 && grid[row][col] == -1) ||
-                (col == cols-1 && grid[row][col] == 1) ||
-                (grid[row][col] == 1 && col < cols-1 && grid[row][col+1] == -1) ||
-                (grid[row][col] == -1 && col > 0 && grid[row][col-1] == 1)) {
-                // stuck
-                return -1;
-            }
-            
-            if (grid[row][col] == 1) {
-                col++;
-            } else {
-                col--;
-            }
-            row++
+    const answer = [...Array(n)].fill(-1);
+    
+    const moveBall = (index, row, col) => {
+        if (row === m) {
+            answer[index] = col;
+            return true;
         }
-        return col;
+        
+        if (row >= m || col < 0 || col >= n) {
+            return false;
+        }
+        
+        const dir = grid[row][col];
+        const next = [];
+        
+        switch(dir) {
+            case 1: {
+                const next = grid[row]?.[col + 1];
+                if (next === 1) {
+                    moveBall(index, row + 1, col + 1);
+                }
+                break;
+            }
+                
+            case -1: {
+                const next = grid[row]?.[col - 1];
+                if (next === -1) {
+                    moveBall(index, row + 1, col - 1);
+                }
+                break;
+            }
+        }
     }
     
-    return Array.from(Array(cols).keys()).map(col => findPath(col));
+    for(let i = 0; i < n; i++) {
+        moveBall(i, 0, i);
+    }
+    
+    return answer;
 };
