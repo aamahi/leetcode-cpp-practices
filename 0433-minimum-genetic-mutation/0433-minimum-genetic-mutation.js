@@ -1,34 +1,47 @@
+var minMutation = function (start, end, bank) {
 
-var minMutation = function(start, end, bank) {
-	const choices = ['A', 'C', 'G', 'T'];
-	const queue = [start];
-	const seen = new Set([start]);
+    const GENE_LETTERS = ['A', 'C', 'G', 'T'];
+    const GENE_SIZE = 8;
+    const NOT_POSSIBLE = -1;
 
-	let steps = 0;
+    const setGeneBank = new Set();
+    for (let gene of bank) {
+        setGeneBank.add(gene);
+    }
 
-	while (queue.length !== 0) {
-		const nodesInQueue = queue.length;
+    if (!setGeneBank.has(end)) {
+        return NOT_POSSIBLE;
+    }
 
-		for (let j = 0; j < nodesInQueue; j++) {
-			const node = queue.shift();
+    const queue = new Queue();
+    queue.enqueue(start.split(''));
+    let numberOfMutations = 0;
 
-			if (node === end)
-				return steps;
+    while (!queue.isEmpty()) {
+        let size = queue.size();
 
-			for (const choice of choices) {
-				for (let i = 0; i < node.length; i++) {
-					const neighbor = node.substring(0, i) + choice + node.substring(i + 1);
+        while (size-- > 0) {
+            const geneAsArray = queue.dequeue();
+            if (geneAsArray.join('') === end) {
+                return numberOfMutations;
+            }
 
-					if (!seen.has(neighbor) && bank.includes(neighbor)) {
-						queue.push(neighbor);
-						seen.add(neighbor);
-					}
-				}
-			}
-		}
+            for (let i = 0; i < GENE_SIZE; i++) {
+                for (let j = 0; j < GENE_LETTERS.length; j++) {
 
-		steps++;
-	}
+                    let storeCurrentLetter = geneAsArray[i];
+                    geneAsArray[i] = GENE_LETTERS[j];
+                    let geneToString = geneAsArray.join('');
 
-	return -1;
-}
+                    if (setGeneBank.has(geneToString)) {
+                        setGeneBank.delete(geneToString);
+                        queue.enqueue([...geneAsArray]);
+                    }
+                    geneAsArray[i] = storeCurrentLetter;
+                }
+            }
+        }
+        numberOfMutations++;
+    }
+    return NOT_POSSIBLE;
+};
