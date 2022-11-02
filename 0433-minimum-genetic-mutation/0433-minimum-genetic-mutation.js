@@ -1,32 +1,24 @@
-var minMutation = function(start, end, bank, step=0) {
-    if (start === end) return step
-
-    const next = []
-    const other = []
-    for(let i=0;i<bank.length;i++) {
-        if (isNext(start, bank[i])) next.push(bank[i])
-        else other.push(bank[i])
-    }
+var minMutation = function(start, end, bank) {
+    let tempBanks = new Set(bank);  
+    let strChars = ['A', 'T', 'C', 'G'];        
+    let Q = [[start,0]];
+    let item, dist, i, j;
+    if( !tempBanks.has(end) ) return -1;
     
-    let result = -1
-    for(let i=0;i<next.length;i++) {
-        result = toResult(result, minMutation(next[i], end, other,step+1))
-    }
-    return result
-};
-
-var isNext = function(a,b) {
-    let diff = 0
-    for(let i=0;i<8;i++) {
-        if (a[i]!==b[i]) {
-            if (++diff === 2) return false
+    while( Q.length > 0 ) {
+        [item,dist] = Q.shift();
+        if( item == end ) return dist;
+        
+        for( i=0; i<8; i++ ) {
+            for( j=0; j<4; j++ ) {
+                if( item[i] == strChars[j] ) continue;
+                var node = item.slice(0,i) + strChars[j] + item.slice(i+1);
+                if( tempBanks.has(node) ) {
+                    Q.push([node,dist+1]);
+                    tempBanks.delete(node);
+                }
+            }
         }
-    }
-    return true
-}
-
-var toResult = function(a,b) {
-    if (b===-1) return a
-    if (a===-1) return b
-    return Math.min(a,b)
-}
+    }   
+    return -1;
+};
