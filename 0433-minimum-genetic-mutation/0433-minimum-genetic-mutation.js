@@ -1,54 +1,32 @@
-/**
- * @param {string} start
- * @param {string} end
- * @param {string[]} bank
- * @return {number}
- */
-var minMutation = function(start, end, bank) {
-    const N = start.length;
-    const valid = new Set(bank);
-    const visited = new Set([start]);
-    const queue = [[start]];
-    const diff = ['A', 'C', 'G', 'T'];
+var minMutation = function(start, end, bank, step=0) {
+    if (start === end) return step
 
-    let steps = 0;
-    
-    if (!valid.has(end)) {
-        return -1;
+    const next = []
+    const other = []
+    for(let i=0;i<bank.length;i++) {
+        if (isNext(start, bank[i])) next.push(bank[i])
+        else other.push(bank[i])
     }
     
-    while (queue.length > 0) {
-        const genes = queue.pop();
-        const newGenes = [];
-
-        for (const gene of genes) {
-            if (gene === end) {
-                return steps;
-            }
-
-            for (let i = 0; i < N; i++) {
-                for (const g of diff) {
-                    const chars = gene.split('');
-                    chars[i] = g;
-
-                    const newGene = chars.join('');
-
-                    if (visited.has(newGene) || !valid.has(newGene)) {
-                        continue;
-                    }
-
-                    visited.add(newGene);
-                    newGenes.push(newGene);
-                }
-            }
-        }
-        
-        if (newGenes.length > 0) {
-            queue.push(newGenes);
-        }
-        
-        steps++;
+    let result = -1
+    for(let i=0;i<next.length;i++) {
+        result = toResult(result, minMutation(next[i], end, other,step+1))
     }
-    
-    return -1;
+    return result
 };
+
+var isNext = function(a,b) {
+    let diff = 0
+    for(let i=0;i<8;i++) {
+        if (a[i]!==b[i]) {
+            if (++diff === 2) return false
+        }
+    }
+    return true
+}
+
+var toResult = function(a,b) {
+    if (b===-1) return a
+    if (a===-1) return b
+    return Math.min(a,b)
+}
